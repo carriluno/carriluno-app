@@ -1,14 +1,23 @@
 const express = require('express');
+const db = require('./config'); // Importamos nuestra configuración de la base de datos
 const app = express();
-const port = 3000; // El puerto interno donde correrá la aplicación
+const port = 3000;
 
-// Esta es una "ruta". Cuando alguien visite la página principal "/", 
-// nuestro servidor responderá con este mensaje.
+// Ruta de prueba para verificar la conexión a la BD
+app.get('/test-db', async (req, res) => {
+  try {
+    const result = await db.query('SELECT NOW()'); // Hacemos una consulta simple: pedir la hora actual
+    res.send(`Conexión a la base de datos exitosa. Hora del servidor de BD: ${result.rows[0].now}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al conectar con la base de datos');
+  }
+});
+
 app.get('/', (req, res) => {
   res.send('¡Hola, Carriluno! El servidor está funcionando.');
 });
 
-// Le decimos al servidor que empiece a escuchar peticiones en el puerto 3000
 app.listen(port, () => {
   console.log(`Servidor de Carriluno escuchando en http://localhost:${port}`);
 });
