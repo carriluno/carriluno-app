@@ -1,22 +1,20 @@
 const express = require('express');
-const db = require('./config'); // Importamos nuestra configuración de la base de datos
+const db = require('./config');
+const userRoutes = require('./routes/users'); // Importamos nuestras nuevas rutas
+
 const app = express();
 const port = 3000;
 
-// Ruta de prueba para verificar la conexión a la BD
-app.get('/test-db', async (req, res) => {
-  try {
-    const result = await db.query('SELECT NOW()'); // Hacemos una consulta simple: pedir la hora actual
-    res.send(`Conexión a la base de datos exitosa. Hora del servidor de BD: ${result.rows[0].now}`);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error al conectar con la base de datos');
-  }
+// Middleware para que Express entienda JSON
+app.use(express.json());
+
+// Ruta principal
+app.get('/', (req, res) => {
+  res.send('¡Bienvenido a la API de Carriluno!');
 });
 
-app.get('/', (req, res) => {
-  res.send('¡Hola, Carriluno! El servidor está funcionando.');
-});
+// Usamos las rutas de usuario bajo el prefijo /api/users
+app.use('/api/users', userRoutes);
 
 app.listen(port, () => {
   console.log(`Servidor de Carriluno escuchando en http://localhost:${port}`);
